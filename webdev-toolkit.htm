@@ -1,0 +1,370 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <title></title>
+    <link href="css/agentzh.css" media="screen" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div id="canvasToolbar">
+      
+      <!--div class="fr">
+        <button onclick="Sporx.addPage()">New Page</button>
+        <button onclick="Sporx.toggleEditMode()">Edit</button>
+        <button onclick="Sporx.reload()">Reload</button>
+      </div-->
+      
+      <div>
+        <button onclick="sporx.firstSlide()">|&lt;&lt;</button>
+        <button onclick="sporx.prevSlide()">&lt;</button>
+        <button onclick="sporx.nextSlide()">&gt;</button>
+        <button onclick="sporx.lastSlide()">&gt;&gt;|</button>
+        <input type="text" id="current_page" size="4" onkeypress="if (this.value) sporx.showSlide(parseInt(this.value)-1);" />
+        /
+        <span id="max_page"></span>
+      </div>
+    </div>
+    <div id="canvas"><div id="content"></div></div>
+    <iframe style="display:none;" id="dataLoader"></iframe>
+    <div id="edit">
+      <textarea id="textField"></textarea>
+    </div>
+    <textarea id="builtinCode" style="width:1px;position:absolute;left:-5px;overflow:hidden;">A Firefox cluster driven by JavaScript, Perl, and PL/PgSQL
+----
+  
+A Firefox {{#x|cluster}} driven by
+{{#i|JavaScript}}, {{#i|Perl}}, &amp; {{#i|PL/PgSQL}}
+  
+☺{{#author|agentzh@yahoo.cn}}☺
+{{#author|章亦春 (agentzh)}}
+{{#date|2009.2}}
+----
+  
+ \"How about using {{#x|Firefox}} in a crawler {{#ci|cluster}}?\"
+ \"Man, you're {{#c|crazy}}!\"
+  
+----
+  
+   {{#cm|✓}} We're running {{#x|24}} headless firefox processes
+        on {{#x|8}} production machines (Linux) and their
+        load is around {{#x|3.0}}.
+   {{#cm|✓}} We get {{#ci|100,000}} web pages crawled and analyzed
+        by my our Firefox cluster {{#x|every hour}}.
+  
+----
+  
+{{img src="#" width="0" height="0"}}
+{{img src="images/cluster-arch.png" }}
+----
+  
+{{img src="images/firefox-guts.png" }}
+----
+  
+{{#tag|☆}}  We use Firefox {{#x|extensions}} to {{#i|control}} Firefox's Gecko
+{{#ci|from inside}} rather than talk to it from outside.
+  
+----
+  
+    {{#cm|/* crawler.js */}}
+    {{#kw|var}} {{#v|browser}} = {{#v|document}}.getElementById({{#c|'my-browser'}});
+    {{#kw|var}} {{#v|browserListener}} = {{#kw|new}} BrowserListener(browser);
+    {{#v|browserListener}}.register();
+    {{#kw|var}} {{#v|openresty}} = {{#kw|new}} OpenResty.Client(
+        {
+            server: {{#c|'http://api.openresty.org'}},
+            user: {{#c|'listhunter.Firefox'}}
+        }
+    );
+    {{#v|openresty}}.callback = doTasks;
+    {{#v|openresty}}.get({{#c|'/=/view/FirefoxGetTasks/count/200'}});
+  
+----
+  
+    {{#kw|function}} doTasks({{#v|tasks}}, {{#v|ind}}) {
+        {{#kw|if}} ({{#v|ind}} == {{#kw|null}}) {{#v|ind}} = 0;
+        {{#kw|var}} {{#v|task}} = {{#v|tasks}}[{{#v|ind}}];
+        {{#kw|if}} ({{#v|task}} == {{#kw|null}}) {{#kw|return}};
+        {{#v|browserListener}}.loadPage(
+            {{#kw|function}} ({{#v|url}}, {{#v|done}}) {
+                {{#kw|if}} ({{#v|done}}) {
+                    analyze({{#v|browser}}.contentDocument);
+                }
+                doTasks({{#v|tasks}}, {{#v|ind}} + 1);
+            },
+            {{#x|3}} {{#cm|/* timeout in sec */}}
+        );
+    }
+  
+----
+  
+{{#cm|☺}} We did {{#ci|NOT}} patch Firefox
+with only two small {{#x|exceptions}}:
+  
++ ➥ Redirect {{#x|Error Console}} outputs to {{#ci|stderr}}
++ ➥ Ignore {{#x|CSS MIME}} type {{#ci|mismatch}}
+  
+----
+  
+{{#tag|☆}}  The {{#x|prefetchers}} {{#ci|prefetch}} the web page content
+via the {{#x|HTTP proxy}} with cache so that {{#x|Firefox}} can
+load stuffs from the {{#ci|cache}} directly.
+----
+  
+{{img src="images/prefetcher-guts.png" }}
+----
+  
+{{img src="images/proxy-guts.png" }}{{img src="images/proxy-guts2.png" }}
+  
+  
+----
+  
+{{#cm|☺}} I added an {{#ci|OverrideExpire}} config directive to {{#x|mod_cache}}
+so that it {{#ci|forgets}} overything about RFC.
+  
+{{img src="images/feather.gif" }}
+  
+----
+  
+{{#cm|☺}} I implemented a {{#x|mod_libmemcached_cache}} module
+so that we can have {{#ci|distributive}} cache storage for {{#x|mod_cache}}
+  
+{{img src="images/feather.gif" }}
+  
+----
+  
+{{#v|Sample benchmark with 59 URLs, 200 currency}}
+  
+    mod_disk_cache + SATA disk    200 ~ 300 QPS
+    mod_disk_cache + tmpfs        400 ~ 500 QPS
+    {{#c|mod_libmemcached_cache}}       {{#x|2200+}}     QPS
+  
+----
+  
+{{img src="images/resty-guts.png" }}
+----
+  
+{{#cm|☺}} OpenResty is a {{#x|REST}} wrapper for PostgreSQL.
+It is trivial to {{#ci|expose}} PL/PgSQL functions/stored procedures
+to the outside world via {{#i|web services}} without loosing security.
+  
+{{img src="images/pg.png" }}
+  
+----
+  
+{{img src="images/resty-cluster.png" }}
+----
+  
+  {{#v|List Hunter}}
+  ➥  Is the web page a {{#x|list page}} or a {{#x|content page}}?
+  ➥  Extract links in the \"{{#ci|main}} {{#ci|list}}\" in list pages.
+  
+----
+  
+{{img src="images/listhunter-main.png" }}
+----
+  
+{{img src="images/listhunter-main-list.png" }}
+----
+  
+  {{#v|Comment Hunter}}
+  
+  ➥  Extract user {{#x|comments}} from
+     {{#c|arbitrary}} web pages
+  
+----
+  
+{{img src="images/commenthunter-main.png" }}
+----
+  
+{{#ci|Test results}} from our surfer girls
+(with 100 random Chinese commercial sites):
+  
++ Precision ratio: {{#x|97.6%}}
++ Recall ratio: {{#x|91.2.%}}
+  
+----
+  
+{{#v|☺}} {{#x|Vision}}-based filters to rule out
+{{#ci|non-comment}} lists
+  
+{{img src="images/vision.png" }}
+----
+  
+    {{#v|element}}.offsetWidth {{#x|*}} {{#v|element}}.offsetHeight   {{#cm|// node area}}
+    {{#v|element}}.offsetWidth {{#x|/}} {{#v|element}}.offsetHeight   {{#cm|// node shape}}
+  
+    {{#cm|// x coordinate of element's left-upper corner}}
+    {{#v|element}}.offsetLeft {{#x|+}} absolute x coordiate of {{#v|element}}.offsetParent
+  
+    {{#cm|// y coordinate of element's left-upper corner}}
+    {{#v|element}}.offsetTop {{#x|+}} absolute y coordiate of {{#v|element}}.offsetParent
+  
+----
+  
+{{img src="images/commenthunter-vert.png" }}
+----
+  
+{{img src="images/commenthunter-hlist.png" }}
+----
+  
+{{img src="images/commenthunter-linkarea.png" }}
+----
+  
+{{#v|☺}}  {{#i|Ranking testing}} is {{#ci|expensive}}
+but {{#ci|necessary}} for the last filter
+  
+----
+  
+{{img src="images/commenthunter-rank.png" }}
+----
+  
+{{#v|♡}} {{#x|Perl}}'s Test::Simple {{#ci|love}} for
+{{#i|extension JavaScript}}
+  
+{{img src="images/love-letter.jpg" }}
+----
+  
+{{img src="images/listhunter-tests.png" }}
+----
+  
+{{img src="images/listhunter-tests2.png" }}
+----
+  
+{{img src="images/listhunter-tests-text.png" }}
+----
+  
+    Test.GuiMode = false;
+    Test.{{#x|plan}}(2 * {{#v|list}}.length);
+    {{#kw|for}} ({{#kw|var}} {{#v|i}} = 0; {{#v|i}} &lt; {{#v|list}}.length; {{#v|i}}++) {
+        Test.{{#x|ok}}({{#v|i}} >= 0, {{#c|'i is always non-negative'}});
+        Test.{{#x|is}}({{#v|i}} * 2, {{#v|i}} + {{#v|i}}, {{#c|'i x 2 = i + i'}});
+    }
+    Test.{{#x|summary}}();
+  
+----
+  
+{{#v|Comment Hunter}}: {{#x|JavaScript}} &amp; {{#x|Perl}} code {{#ci|only}}
+  
+{{img src="images/js-icon.jpg" }}   {{img src="images/perl_camel.jpg" }}
+----
+  
+      {{#v|$ find js -name '*.js' | xargs wc -l}}
+         27 js/cli-prefs.js
+        332 js/main.js
+          3 js/test-data.js
+        374 js/haiway-miner.js
+         26 js/box.js
+         32 js/util.js
+          7 js/env.js
+         62 js/benchmark-timer.js
+         18 js/samples.js
+        160 js/test.js
+        329 js/filters.js
+        151 js/browser-listener.js
+        137 js/test-more.js
+       {{#x|1658 total}}
+  
+  
+----
+  
+      {{#v|$ find lib -name '*.pm' | xargs wc -l}}
+         39 lib/CommentHunter/View/Test.pm
+        106 lib/CommentHunter/View/Main.pm
+         34 lib/CommentHunter/View/Overlay.pm
+         52 lib/CommentHunter/App.pm
+        {{#x|231 total}}
+  
+----
+  
+{{#ci|Powered}} by my {{#x|XUL::App}} framework
+  
+{{img src="images/moosecamel.png" }}
+----
+  
+A {{#ci|Hello World}} extension in {{#x|XUL::App}}
+  
+{{img src="images/helloworld.jpg" }}
+----
+  
+    {{#cm|# File lib/HelloWorld/App.pm}}
+    {{#kw|package}} HelloWorld::App;
+    {{#kw|our}} {{#v|$$VERSION}}; BEGIN { {{#v|$$VERSION}} = '0.01' }
+    {{#kw|use}} XUL::App::Schema;
+    {{#kw|use}} XUL::App schema {
+        {{#x|xulfile 'hellowin.xul' => }}
+            {{#x|generated from 'HelloWorld::View::HelloWin',}}
+            {{#x|includes qw( jquery.js hellowin.js );}}
+  
+        xpifile 'helloworld.xpi' =>
+            name is 'HelloWorld',
+            id is 'helloworld@agentz.agentz-office', {{#cm|# FIXME}}
+            version is {{#v|$$VERSION}},
+            targets {
+                Firefox => ['2.0' => '3.0a5'], {{#cm|# FIXME}}
+            },
+            creator is 'The HelloWorld development team',
+            {{#v|...}}
+  
+----
+  
+  {{#v|Ruby}}: \"We have this {{#ci|gorgeous}} syntax!\"
+  {{#v|Perl}}: \"Hey, we do {{#x|as well}} ;)\"
+  
+----
+  
+   {{#cm|# File lib/HelloWorld/View/HelloWin.pm}}
+   {{#kw|package}} HelloWorld::View::HelloWin;
+   {{#kw|use base}} 'XUL::App::View::Base';
+   {{#kw|use}} Template::Declare::Tags 'XUL';
+    template main => {{#kw|sub}} {
+        show 'header';  {{#cm|# from XUL::App::View::Base}}
+        window {
+            attr {
+                id => \"helloworld-hellowin\",
+                xmlns => {{#v|$::XUL_NAME_SPACE}},
+                title => _('Hello World ') .
+                    {{#v|$$HelloWorld::App::VERSION}},
+                {{#v|...}}
+            }
+            {{#x|label { _("Hello, world!") } }}
+        }
+        {{#v|...}}
+  
+----
+  
+   {{#v|$}} {{#ci|xulapp}} {{#x|bundle}} .
+    Writing file hellowin.xul
+    Writing bundle file {{#x|./helloworld.xpi}}
+   {{#v|$}} 
+  
+----
+  
+ Our {{#kw|helloworld.xpi}} bundle {{#tag|➥}}
+  
+   {{#cm|✓}} contains {{#ci|0}} Perl
+   {{#cm|✓}} has {{#ci|0}} dependencies
+      (except Firefox itself)
+   {{#cm|✓}} runs happily {{#ci|everywhere}}
+      (Win32, Linux, Mac, and etc.)
+  
+----
+  
+ The {{#ci|future}}
+  
+   {{#cm|✓}} {{#ci|Opensource}} everything we have :)
+   {{#cm|✓}} More hunters, more fun: {{#i|Table Hunter}}, {{#i|Title Hunter}},
+         {{#i|Ranking Hunter}}, {{#i|Ads Hunter}}, {{#i|Summary Hunter}}, ...
+   {{#cm|✓}} Automatic C/C++ {{#x|XPCOM}} wrapper generator for XUL::App.
+   {{#cm|✓}} Bring Firefox extension love to Apple's {{#ci|WebKit}}
+         (A WebKit crawler cluster?)
+  
+----
+  
+☺ {{#ci|Any questions}}? ☺
+__END__
+----
+  </textarea>
+    <script type="text/javascript" src="lib/sporx.js"></script>
+  </body>
+</html>
