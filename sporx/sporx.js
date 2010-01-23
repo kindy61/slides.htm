@@ -227,7 +227,7 @@ Sporx.prototype = {
                 this.content.lastChild.setAttribute('align', 'left');
                 this.content.lastChild.setAttribute('class', 'pre-big');
                 //line = line.substring(1);
-                _log('"' + line + '"');
+                //_log('"' + line + '"');
                 //line = line.replace(/  /g, '    ');
             }
 
@@ -243,12 +243,9 @@ Sporx.prototype = {
 
         this.canvas.rendering = null;
         var me = this;
-        setTimeout(function () {
+        setInterval(function () {
             me.adjustCanvasSize();
-        }, 1);
-        setTimeout(function () {
-            me.adjustCanvasSize();
-        }, 50);
+        }, 200);
     },
 
     adjustCanvasSize: function() {
@@ -291,19 +288,21 @@ Sporx.prototype = {
             canvas_h  = this.canvas.offsetHeight;
 
             var diff = canvas_h - content_h;
+            /*
             _log("diff: " + diff + ", content_h: "
                     + content_h + ", canvas_h: "
                     + diff + ", content top: "
                     + this.content.style.top);
+                    */
 
             if (diff > 20) {
-                _log("adjusting...");
+                //_log("adjusting...");
                 this.content.style.top = diff/2.8 + 'px';
             } else {
                 this.content.style.top = 0;
             }
 
-            _log("after top: " + this.content.style.top);
+            //_log("after top: " + this.content.style.top);
         }
     },
 
@@ -403,8 +402,8 @@ Sporx.prototype = {
         }
 
         if (line) {
-            _log("text node: " + line);
-            _log("parent class name: " + content.lastChild.className);
+            //_log("text node: " + line);
+            //_log("parent class name: " + content.lastChild.className);
             content.lastChild.appendChild(document.createElement('span'));
             content.lastChild.lastChild.innerHTML = escape_html(line);
             this.fixPre(content.lastChild);
@@ -413,9 +412,11 @@ Sporx.prototype = {
     },
 
     fixPre: function (node) {
+                /*
         if (/\bpre-big\b/.test(node.className)) {
             _log("found pre!!! " + node.className);
         }
+        */
         if (node.lastChild.className) {
             //node.lastChild.className += ' pre';
         } else {
@@ -613,15 +614,19 @@ addEv(window, 'load', function(){
 
         key = (e || event).keyCode
 
-        //_log(key);
+        _log(key);
         switch(key) {
             case 8:
+            case 33:
+                e.preventDefault();
             case 37:
             case 112:
                 sporx.prevSlide();
                 break;
             case 13:
             case 32:
+            case 34:
+                e.preventDefault();
             case 39:
             case 110:
                 sporx.nextSlide();
