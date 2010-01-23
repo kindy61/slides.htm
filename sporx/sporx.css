@@ -148,16 +148,16 @@
   font-style: italic;
 }
 .author {
-  color: #C39;
-  margin: 0px;
-  font-style: italic;
-  font-family: "Consolas"
-       "Constantia"
-       "Times New Roman"
-       "微软雅黑"
-       "Bitstream Vera Serif"
-       serif;
-  font-size: 70%;
+        color: #C39;
+        margin: 0px;
+        font-style: italic;
+        font-family: "Consolas"
+                     "Constantia"
+                     "Times New Roman"
+                     "微软雅黑"
+                     "Bitstream Vera Serif"
+                     serif;
+        font-size: 70%;
 }
 .cu {
   color: #C39;
@@ -225,7 +225,7 @@
 
 html, body, div {
   margin: 0;
-  padding: 0;
+  padding: 2px;
 }
 
 body{

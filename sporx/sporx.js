@@ -87,7 +87,7 @@ Sporx.prototype = {
         // 存储显示区域
         this.canvas   = document.getElementById('canvas');
 
-        addEv(this.canvas, 'click', function(ev){ sporx.onPresentationClick(ev); });
+        //addEv(this.canvas, 'click', function(ev){ sporx.onPresentationClick(ev); });
         // addEv(this.canvas, 'dblclick', function(ev){ sporx.prevSlide(); });
 
         //addEv(document.body, 'contextmenu', function(ev){return false;alert(1);});
@@ -188,7 +188,7 @@ Sporx.prototype = {
             split('\n');
 
         this.content.innerHTML = '';
-        this.content.style.top = '';
+        this.content.style.top = 0;
 
         var line;
 
@@ -226,7 +226,7 @@ Sporx.prototype = {
             if (line.match(/^ /)) {
                 this.content.lastChild.setAttribute('align', 'left');
                 this.content.lastChild.setAttribute('class', 'pre-big');
-                line = line.substring(1);
+                //line = line.substring(1);
                 _log('"' + line + '"');
                 //line = line.replace(/  /g, '    ');
             }
@@ -242,15 +242,21 @@ Sporx.prototype = {
         this.adjustCanvasSize();
 
         this.canvas.rendering = null;
+        var me = this;
+        setTimeout(function () {
+            me.adjustCanvasSize();
+        }, 1);
+        setTimeout(function () {
+            me.adjustCanvasSize();
+        }, 50);
     },
 
     adjustCanvasSize: function() {
-
         if (!this.content) {
             return;
         }
 
-        this.content.style.fontSize = '12px';
+        this.content.style.fontSize = '10px';
 
         if (this.content.offsetHeight) {
             var canvas_w  = this.canvas.offsetWidth;
@@ -280,10 +286,24 @@ Sporx.prototype = {
                 this.content.style.fontSize = new_fs + "px";
             }
             content_h = this.content.offsetHeight;
+            //content_h = 0;
+            //_log("content_h: " + content_h);
             canvas_h  = this.canvas.offsetHeight;
-            if (canvas_h - content_h > 20) {
-                this.content.style.top = (canvas_h - content_h)/2.8 + 'px';
+
+            var diff = canvas_h - content_h;
+            _log("diff: " + diff + ", content_h: "
+                    + content_h + ", canvas_h: "
+                    + diff + ", content top: "
+                    + this.content.style.top);
+
+            if (diff > 20) {
+                _log("adjusting...");
+                this.content.style.top = diff/2.8 + 'px';
+            } else {
+                this.content.style.top = 0;
             }
+
+            _log("after top: " + this.content.style.top);
         }
     },
 
@@ -355,10 +375,11 @@ Sporx.prototype = {
             // Styles 普通带 class 文本，不是 link
             else if (/^((?:[^\{]|\{[^\{])+)?\{\{(#([^\|]+)?\|)(.+?)\}\}/.test(line)) {
                 uri = RegExp.$4;    // 误导的变量名
+                className = RegExp.$3;
                 content.lastChild.
                     appendChild(document.createElement('span'));
                 content.lastChild.lastChild.innerHTML = escape_html(uri);
-                content.lastChild.lastChild.className = RegExp.$3;
+                content.lastChild.lastChild.className = className;
                 this.fixPre(content.lastChild);
             }
 
@@ -444,7 +465,7 @@ Sporx.prototype = {
             replace(/\n__END__\r?\n[\s\S]*/m, '\n').
             replace(/&amp;/g, '&').
             replace(/&lt;/g, '<').
-            split('----');
+            split('----\n');
 
         for (var i = 0; i < slides.length; i++) {
             var slide = slides[i];
