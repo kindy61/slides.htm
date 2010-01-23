@@ -30,341 +30,263 @@
     <div id="edit">
       <textarea id="textField"></textarea>
     </div>
-    <textarea id="builtinCode" style="width:1px;position:absolute;left:-5px;overflow:hidden;">A Firefox cluster driven by JavaScript, Perl, and PL/PgSQL
-----
+    <textarea id="builtinCode" style="width:1px;position:absolute;left:-5px;overflow:hidden;">----
   
-A Firefox {{#x|cluster}} driven by
-{{#i|JavaScript}}, {{#i|Perl}}, &amp; {{#i|PL/PgSQL}}
+Introduction to
+our {{#x|VDOM.pm}} &amp; {{#x|vdom-webkit}} cluster
   
 ☺{{#author|agentzh@yahoo.cn}}☺
 {{#author|章亦春 (agentzh)}}
-{{#date|2009.2}}
+{{#date|2009.9}}
 ----
   
- \"How about using {{#x|Firefox}} in a crawler {{#ci|cluster}}?\"
- \"Man, you're {{#c|crazy}}!\"
   
-----
+  {{#v|VDOM}}
   
-   {{#cm|✓}} We're running {{#x|24}} headless firefox processes
-        on {{#x|8}} production machines (Linux) and their
-        load is around {{#x|3.0}}.
-   {{#cm|✓}} We get {{#ci|100,000}} web pages crawled and analyzed
-        by my our Firefox cluster {{#x|every hour}}.
+  ➥  {{#x|Visual}} DOM
+  ➥  DOMs with {{#ci|vision information}}
+  
   
 ----
   
+  {{#kw|window}} {{#kw|location}}={{#x|"http://foo.bar.com/index.html"}}
+             {{#kw|innerHeight}}=802 {{#kw|innerWidth}}=929
+             {{#kw|outerHeight}}=943 {{#kw|outerWidth}}=1272 {
+      {{#kw|document}} {{#kw|width}}=914 {{#kw|height}}=5119 {
+          {{#v|...}}
+      }
+  }
+  
+----
+  
+    {{#kw|BODY}} {{#kw|x}}=0 {{#kw|y}}=0 {{#kw|w}}=914
+             {{#kw|h}}=5119
+             {{#kw|fontFamily}}=\"Helvetica,Arial,sans-serif\"
+             {{#kw|fontSize}}=\"12px\" {{#kw|fontStyle}}=\"normal\"
+             {{#kw|fontWeight}}=\"400\" {{#kw|color}}=\"rgb(0, 0, 0)\"
+             {{#kw|backgroundColor}}=\"rgb(255, 255, 255)\" {
+          {{#x|"\\n  "}} w=0 {
+          }
+          {{#kw|DIV}} {{#kw|id}}=\"append_parent\" {{#kw|x}}=0 {{#kw|y}}=0
+                  {{#kw|h}}=0 {{#kw|backgroundColor}}=\"transparent\" {
+              {{#x|"首页\\n\\n"}} {{#kw|x}}=1 {{#kw|y}}=1 {
+                  {{#v|...}}
+              }
+          }
+          {{#x|"\\n  "}} w=0 {
+          }
+    }
+  
+----
+  
+  {{#kw|FONT}} {{#kw|color}}=\"rgb(255, 0, 0)\" {
+    {{#kw|B}} {{#kw|fontWeight}}=\"401\" {
+      {{#x|"购物"}} {{#kw|h}}=32 {{#kw|w}}=56 {
+      }
+    }
+  }
+  
+----
+  
+\"Why {{#ci|another}} language?\"
+\"Why {{#x|not}} just borrow HTML or XML's syntax?\"
+  
+----
+  
+   {{#cm|✓}} We want to keep VDOM dump size {{#ci|small}}.
+   {{#cm|✓}} We want to keep VDOM dump {{#ci|unambiguous}}.
+   {{#cm|✓}} We want to make VDOM more {{#x|human-readable}} and more
+         {{#x|human-writable}}.
+         (Yeah, XML/HTML's syntax is very {{#i|cumbersome}}.)
+   {{#cm|✓}} We want to make VDOM {{#i|parsers}} &amp; {{#i|dumper}}
+         {{#ci|trivial}} to implement and verify.
+         (tens of lines of Perl for example ;))
+   {{#cm|✓}} Low level structures like {{#ci|text runs}} and {{#ci|text nodes}}
+         are hard to express naturally in HTML or XML.
+  
+----
+  
+{{#x|☺}} We've already made both
+Mozilla {{#x|Gecko}} and Apple {{#x|WebKit}} {{#i|emit}} VDOMs
+  
+----
 {{img src="#" width="0" height="0"}}
-{{img src="images/cluster-arch.png" }}
-----
-  
-{{img src="images/firefox-guts.png" }}
-----
-  
-{{#tag|☆}}  We use Firefox {{#x|extensions}} to {{#i|control}} Firefox's Gecko
-{{#ci|from inside}} rather than talk to it from outside.
+{{img src="images/gen-vdom.png" width="627" height="555"}}
   
 ----
   
-    {{#cm|/* crawler.js */}}
-    {{#kw|var}} {{#v|browser}} = {{#v|document}}.getElementById({{#c|'my-browser'}});
-    {{#kw|var}} {{#v|browserListener}} = {{#kw|new}} BrowserListener(browser);
-    {{#v|browserListener}}.register();
-    {{#kw|var}} {{#v|openresty}} = {{#kw|new}} OpenResty.Client(
-        {
-            server: {{#c|'http://api.openresty.org'}},
-            user: {{#c|'listhunter.Firefox'}}
-        }
-    );
-    {{#v|openresty}}.callback = doTasks;
-    {{#v|openresty}}.get({{#c|'/=/view/FirefoxGetTasks/count/200'}});
+ {{#cm|# Generate VDOM from the command line:}}
+ {{#v|$}} {{#ci|vdomkit}} --enable-js --proxy=proxy.cn:1080 \\
+        http://www.sina.com.cn > sina.vdom
+  
+ {{#cm|# Or access our vdomkit FastCGI server directly by HTTP:}}
+ {{#v|$}} curl 'http://vdom.cn.yahoo.com/vdom?{{#x|url=http%3A%2F%2Fwww.sina.com.cn}}' \\
+        > sina.vdom
   
 ----
   
-    {{#kw|function}} doTasks({{#v|tasks}}, {{#v|ind}}) {
-        {{#kw|if}} ({{#v|ind}} == {{#kw|null}}) {{#v|ind}} = 0;
-        {{#kw|var}} {{#v|task}} = {{#v|tasks}}[{{#v|ind}}];
-        {{#kw|if}} ({{#v|task}} == {{#kw|null}}) {{#kw|return}};
-        {{#v|browserListener}}.loadPage(
-            {{#kw|function}} ({{#v|url}}, {{#v|done}}) {
-                {{#kw|if}} ({{#v|done}}) {
-                    analyze({{#v|browser}}.contentDocument);
-                }
-                doTasks({{#v|tasks}}, {{#v|ind}} + 1);
-            },
-            {{#x|3}} {{#cm|/* timeout in sec */}}
-        );
-    }
+ {{#cm|# The VDOM dump is much smaller than the original HTML:}}
+ {{#v|$}} ls -lh {{#ci|sina.vdom}}
+ -rw------- 1 agentz agentz {{#x|278K}} 2009-04-10 10:30 sina.vdom
+  
+ {{#v|$}} ls -lh {{#ci|sina.html}}
+ -rw-r--r-- 1 agentz agentz {{#x|400K}} 2009-04-10 10:34 sina.html
   
 ----
   
-{{#cm|☺}} We did {{#ci|NOT}} patch Firefox
-with only two small {{#x|exceptions}}:
-  
-+ ➥ Redirect {{#x|Error Console}} outputs to {{#ci|stderr}}
-+ ➥ Ignore {{#x|CSS MIME}} type {{#ci|mismatch}}
+{{#cm|✓}} Now {{#ci|Perl}} enjoys {{#x|very powerful DOMs}}
+as good as those in JavaScript.
   
 ----
   
-{{#tag|☆}}  The {{#x|prefetchers}} {{#ci|prefetch}} the web page content
-via the {{#x|HTTP proxy}} with cache so that {{#x|Firefox}} can
-load stuffs from the {{#ci|cache}} directly.
-----
-  
-{{img src="images/prefetcher-guts.png" }}
-----
-  
-{{img src="images/proxy-guts.png" }}{{img src="images/proxy-guts2.png" }}
-  
-  
-----
-  
-{{#cm|☺}} I added an {{#ci|OverrideExpire}} config directive to {{#x|mod_cache}}
-so that it {{#ci|forgets}} overything about RFC.
-  
-{{img src="images/feather.gif" }}
+  {{#kw|use}} VDOM;
+  {{#kw|open my}} {{#v|$in}}, {{#x|"sina.vdom"}} or die {{#v|$!}};
+  {{#kw|my}} {{#v|$win}} = VDOM::Window->new->parse_file({{#v|$in}});
+  {{#kw|my}} {{#v|$body}} = {{#v|$win}}->document->body;
+  {{#kw|for my}} {{#v|$child}} ({{#v|$body}}->childNodes) {
+       print {{#v|$child}}->tagName;
+       print {{#v|$child}}->x;
+       print {{#v|$child}}->h;
+       print {{#v|$child}}->color;
+       print {{#v|$child}}->fontFamily;
+       {{#v|...}}
+  }
   
 ----
   
-{{#cm|☺}} I implemented a {{#x|mod_libmemcached_cache}} module
-so that we can have {{#ci|distributive}} cache storage for {{#x|mod_cache}}
+ print {{#v|$child}}->nextSibling;
+ {{#v|$win}}->document->getElementById({{#x|"foo"}});
   
-{{img src="images/feather.gif" }}
+ {{#cm|# These are Firefox 3.1 DOM methods, we have too ;)}}
+ print {{#v|$child}}->previousElementSibling;
+ print {{#v|$child}}->firstElementChild;
   
-----
-  
-{{#v|Sample benchmark with 59 URLs, 200 currency}}
-  
-    mod_disk_cache + SATA disk    200 ~ 300 QPS
-    mod_disk_cache + tmpfs        400 ~ 500 QPS
-    {{#c|mod_libmemcached_cache}}       {{#x|2200+}}     QPS
-  
-----
-  
-{{img src="images/resty-guts.png" }}
-----
-  
-{{#cm|☺}} OpenResty is a {{#x|REST}} wrapper for PostgreSQL.
-It is trivial to {{#ci|expose}} PL/PgSQL functions/stored procedures
-to the outside world via {{#i|web services}} without loosing security.
-  
-{{img src="images/pg.png" }}
+ print $child->parentNode;
+ print {{#kw|join}} {{#x|' '}},
+    {{#kw|map}} { {{#v|$$_}}->href . {{#x|': '}} . {{#v|$$_}}->textContent }
+        {{#v|$child}}->getElmenetsByTagName({{#x|"A"}});
   
 ----
-  
-{{img src="images/resty-cluster.png" }}
+{{img src="#" width="0" height="0"}}
+{{img src="images/vdom-pm.png" width="449" height="1176"}}
+----
+{{img src="#" width="0" height="0"}}
+{{img src="images/vdom-pm2.png" width="373" height="285"}}
 ----
   
-  {{#v|List Hunter}}
-  ➥  Is the web page a {{#x|list page}} or a {{#x|content page}}?
-  ➥  Extract links in the \"{{#ci|main}} {{#ci|list}}\" in list pages.
+{{#cm|☺}} {{#i|Debug}} our Perl code from within {{#ci|Firefox}}
+via our {{#x|Visual DOM}} extension
   
 ----
-  
-{{img src="images/listhunter-main.png" }}
+{{img src="#" width="0" height="0"}}
+{{img src="images/visualdom-ch.png" width="863" height="636"}}
+----
+{{img src="#" width="0" height="0"}}
+{{img src="images/visualdom-ch-cfg.png" width="1016" height="762"}}
+----
+{{img src="#" width="0" height="0"}}
+{{img src="images/between-ff-perl.png" width="704" height="639"}}
+----
+{{img src="#" width="0" height="0"}}
+{{img src="images/visualdom-lh.png" width="1016" height="762"}}
+----
+{{img src="#" width="0" height="0"}}
+{{img src="images/visualdom-lh-cfg.png" width="863" height="636"}}
 ----
   
-{{img src="images/listhunter-main-list.png" }}
-----
-  
-  {{#v|Comment Hunter}}
-  
-  ➥  Extract user {{#x|comments}} from
-     {{#c|arbitrary}} web pages
+{{#cm|☺}} The {{#ci|qt-webkit port}} of our {{#x|Visual DOM}} extension:
+{{#i|VDOM Browser}}
   
 ----
-  
-{{img src="images/commenthunter-main.png" }}
+{{img src="#" width="0" height="0"}}
+{{img src="images/vdom-browser-config.png" width="1280" height="1024"}}
+----
+{{img src="#" width="0" height="0"}}
+{{img src="images/ch-eeee.png" width="1280" height="968"}}
+----
+{{img src="#" width="0" height="0"}}
+{{img src="images/ch-bbs-big.png" width="1280" height="968"}}
+----
+{{img src="#" width="0" height="0"}}
+{{img src="images/ch-bbs-guided.png" width="1034" height="658"}}
+----
+{{img src="#" width="0" height="0"}}
+{{img src="images/between-vdombrowser-perl.png" width="631" height="639"}}
+----
+{{#cm|☺}} We can get geometry information of
+every {{#ci|text nodes}} in the DOM!
+----
+{{img src="#" width="0" height="0"}}
+{{img src="images/vb-text-nodes.png" width="1047" height="797"}}
+----
+...or even as small as {{#ci|text runs}}!
+(text run is the undividable component of a text node
+which has no line breaks in it)
+----
+{{img src="#" width="0" height="0"}}
+{{img src="images/vb-text-runs.png" width="1047" height="797"}}
 ----
   
-{{#ci|Test results}} from our surfer girls
-(with 100 random Chinese commercial sites):
-  
-+ Precision ratio: {{#x|97.6%}}
-+ Recall ratio: {{#x|91.2.%}}
+{{#cm|☺}} Put everything into a {{#ci|cluster}}.
   
 ----
-  
-{{#v|☺}} {{#x|Vision}}-based filters to rule out
-{{#ci|non-comment}} lists
-  
-{{img src="images/vision.png" }}
+{{img src="#" width="0" height="0"}}
+{{img src="images/cluster-arch.png" width="921" height="498"}}
+----
+{{img src="#" width="0" height="0"}}
+{{img src="images/vdomwebkit-farm.png" width="448" height="459"}}
+----
+{{img src="#" width="0" height="0"}}
+{{img src="images/proxy-guts2.png" width="448" height="341"}}
+----
+{{img src="#" width="0" height="0"}}
+{{img src="images/prefetcher-guts.png" width="800" height="581"}}
+----
+{{img src="#" width="0" height="0"}}
+{{img src="images/memcacheq-guts.png" width="307" height="148"}}
+----
+{{#cm|☺}} Most of the components have been {{#ci|opensourced}}
+----
+ QtWebKit with {{#ci|VDOM support}}
+  ➥  {{http://github.com/agentzh/vdomwebkit/}}
+----
+ vdomkit ({{#ci|command-line}} utility and {{#ci|web}} interface)
+  ➥  {{http://github.com/agentzh/vdomkit/}}
+----
+ VDOM Browser
+  ➥  {{http://github.com/agentzh/vdombrowser/}}
+----
+ VDOM.pm
+  ➥  {{http://github.com/agentzh/vdompm/}}
+----
+ queue-size-aware version of {{#ci|memcacheq}}
+  ➥  {{http://github.com/agentzh/memcacheq/}}
+----
+ Queue::Memcached::Buffered (a {{#ci|Perl client}} for memcacheq)
+  ➥  {{http://github.com/agentzh/queue-memcached-buffered/}}
 ----
   
-    {{#v|element}}.offsetWidth {{#x|*}} {{#v|element}}.offsetHeight   {{#cm|// node area}}
-    {{#v|element}}.offsetWidth {{#x|/}} {{#v|element}}.offsetHeight   {{#cm|// node shape}}
+ {{#x|Acknowledgements}}
   
-    {{#cm|// x coordinate of element's left-upper corner}}
-    {{#v|element}}.offsetLeft {{#x|+}} absolute x coordiate of {{#v|element}}.offsetParent
-  
-    {{#cm|// y coordinate of element's left-upper corner}}
-    {{#v|element}}.offsetTop {{#x|+}} absolute y coordiate of {{#v|element}}.offsetParent
-  
-----
-  
-{{img src="images/commenthunter-vert.png" }}
-----
-  
-{{img src="images/commenthunter-hlist.png" }}
-----
-  
-{{img src="images/commenthunter-linkarea.png" }}
-----
-  
-{{#v|☺}}  {{#i|Ranking testing}} is {{#ci|expensive}}
-but {{#ci|necessary}} for the last filter
-  
-----
-  
-{{img src="images/commenthunter-rank.png" }}
-----
-  
-{{#v|♡}} {{#x|Perl}}'s Test::Simple {{#ci|love}} for
-{{#i|extension JavaScript}}
-  
-{{img src="images/love-letter.jpg" }}
-----
-  
-{{img src="images/listhunter-tests.png" }}
-----
-  
-{{img src="images/listhunter-tests2.png" }}
-----
-  
-{{img src="images/listhunter-tests-text.png" }}
-----
-  
-    Test.GuiMode = false;
-    Test.{{#x|plan}}(2 * {{#v|list}}.length);
-    {{#kw|for}} ({{#kw|var}} {{#v|i}} = 0; {{#v|i}} &lt; {{#v|list}}.length; {{#v|i}}++) {
-        Test.{{#x|ok}}({{#v|i}} >= 0, {{#c|'i is always non-negative'}});
-        Test.{{#x|is}}({{#v|i}} * 2, {{#v|i}} + {{#v|i}}, {{#c|'i x 2 = i + i'}});
-    }
-    Test.{{#x|summary}}();
-  
-----
-  
-{{#v|Comment Hunter}}: {{#x|JavaScript}} &amp; {{#x|Perl}} code {{#ci|only}}
-  
-{{img src="images/js-icon.jpg" }}   {{img src="images/perl_camel.jpg" }}
-----
-  
-      {{#v|$ find js -name '*.js' | xargs wc -l}}
-         27 js/cli-prefs.js
-        332 js/main.js
-          3 js/test-data.js
-        374 js/haiway-miner.js
-         26 js/box.js
-         32 js/util.js
-          7 js/env.js
-         62 js/benchmark-timer.js
-         18 js/samples.js
-        160 js/test.js
-        329 js/filters.js
-        151 js/browser-listener.js
-        137 js/test-more.js
-       {{#x|1658 total}}
-  
-  
-----
-  
-      {{#v|$ find lib -name '*.pm' | xargs wc -l}}
-         39 lib/CommentHunter/View/Test.pm
-        106 lib/CommentHunter/View/Main.pm
-         34 lib/CommentHunter/View/Overlay.pm
-         52 lib/CommentHunter/App.pm
-        {{#x|231 total}}
-  
-----
-  
-{{#ci|Powered}} by my {{#x|XUL::App}} framework
-  
-{{img src="images/moosecamel.png" }}
-----
-  
-A {{#ci|Hello World}} extension in {{#x|XUL::App}}
-  
-{{img src="images/helloworld.jpg" }}
-----
-  
-    {{#cm|# File lib/HelloWorld/App.pm}}
-    {{#kw|package}} HelloWorld::App;
-    {{#kw|our}} {{#v|$$VERSION}}; BEGIN { {{#v|$$VERSION}} = '0.01' }
-    {{#kw|use}} XUL::App::Schema;
-    {{#kw|use}} XUL::App schema {
-        {{#x|xulfile 'hellowin.xul' => }}
-            {{#x|generated from 'HelloWorld::View::HelloWin',}}
-            {{#x|includes qw( jquery.js hellowin.js );}}
-  
-        xpifile 'helloworld.xpi' =>
-            name is 'HelloWorld',
-            id is 'helloworld@agentz.agentz-office', {{#cm|# FIXME}}
-            version is {{#v|$$VERSION}},
-            targets {
-                Firefox => ['2.0' => '3.0a5'], {{#cm|# FIXME}}
-            },
-            creator is 'The HelloWorld development team',
-            {{#v|...}}
-  
-----
-  
-  {{#v|Ruby}}: \"We have this {{#ci|gorgeous}} syntax!\"
-  {{#v|Perl}}: \"Hey, we do {{#x|as well}} ;)\"
-  
-----
-  
-   {{#cm|# File lib/HelloWorld/View/HelloWin.pm}}
-   {{#kw|package}} HelloWorld::View::HelloWin;
-   {{#kw|use base}} 'XUL::App::View::Base';
-   {{#kw|use}} Template::Declare::Tags 'XUL';
-    template main => {{#kw|sub}} {
-        show 'header';  {{#cm|# from XUL::App::View::Base}}
-        window {
-            attr {
-                id => \"helloworld-hellowin\",
-                xmlns => {{#v|$::XUL_NAME_SPACE}},
-                title => _('Hello World ') .
-                    {{#v|$$HelloWorld::App::VERSION}},
-                {{#v|...}}
-            }
-            {{#x|label { _("Hello, world!") } }}
-        }
-        {{#v|...}}
-  
-----
-  
-   {{#v|$}} {{#ci|xulapp}} {{#x|bundle}} .
-    Writing file hellowin.xul
-    Writing bundle file {{#x|./helloworld.xpi}}
-   {{#v|$}} 
-  
-----
-  
- Our {{#kw|helloworld.xpi}} bundle {{#tag|➥}}
-  
-   {{#cm|✓}} contains {{#ci|0}} Perl
-   {{#cm|✓}} has {{#ci|0}} dependencies
-      (except Firefox itself)
-   {{#cm|✓}} runs happily {{#ci|everywhere}}
-      (Win32, Linux, Mac, and etc.)
-  
-----
-  
- The {{#ci|future}}
-  
-   {{#cm|✓}} {{#ci|Opensource}} everything we have :)
-   {{#cm|✓}} More hunters, more fun: {{#i|Table Hunter}}, {{#i|Title Hunter}},
-         {{#i|Ranking Hunter}}, {{#i|Ads Hunter}}, {{#i|Summary Hunter}}, ...
-   {{#cm|✓}} Automatic C/C++ {{#x|XPCOM}} wrapper generator for XUL::App.
-   {{#cm|✓}} Bring Firefox extension love to Apple's {{#ci|WebKit}}
-         (A WebKit crawler cluster?)
+ {{#x|☺}}  haibo++ persuaded me to believe that the {{#ci|separation}} of browser
+    rendering engines and our hunter extractors via VDOM dumping
+    could give rise to {{#ci|lots}} of benefits.
+ {{#x|☺}}  jianingy++ effectively {{#ci|fired}} the great WebKit craze in our team.
+ {{#x|☺}}  xunxin++ {{#ci|ported}} Visual DOM extension's JavaScript VDOM dumper
+    to qt-webkit C++ and did most of the hard work in {{#ci|vdom-webkit}}.
+ {{#x|☺}}  xunxin++ {{#ci|ported}} patched sina's memcacheq to make it aware
+    of queue sizes.
+ {{#x|☺}}  mingyou++ shared a great deal of his {{#ci|knowledge}} of the WebKit
+    internals with us and also gave very good suggestions for the
+    slides you're browsing.
   
 ----
   
 ☺ {{#ci|Any questions}}? ☺
-__END__
+  
 ----
-  </textarea>
+  
+    </textarea>
     <script type="text/javascript" src="sporx/sporx.js"></script>
   </body>
 </html>

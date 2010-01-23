@@ -189,6 +189,31 @@
   padding-bottom: 8px;
   font-weight: bold;
 }
+
+.pre-big {
+  font-family: "Consolas"
+       "Courier New"
+       "Anonymous"
+       "Andale Mono"
+       "Bitstream Vera Sans Mono"
+       "微软雅黑"
+       monospace;
+  padding-bottom: 8px;
+  font-weight: bold;
+  margin-left: 20%;
+}
+
+.pre {
+  font-family: "Consolas"
+       "Courier New"
+       "Anonymous"
+       "Andale Mono"
+       "Bitstream Vera Sans Mono"
+       "微软雅黑"
+       monospace;
+  padding-bottom: 8px;
+  font-weight: bold;
+}
 #canvas[rendering="true"] img {
   display: none;
 }

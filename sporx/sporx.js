@@ -10,7 +10,7 @@ window._profile=function(){};
 function addEv(elm, typ, fn) {
     if ( elm.nodeType == 3 || elm.nodeType == 8 )
 		return;
-    
+
     if (elm && elm.addEventListener) {
         elm.addEventListener(typ, fn, false);
     } else if (elm && elm.attachEvent) {
@@ -26,7 +26,7 @@ function addEv(elm, typ, fn) {
 function rmEv(elm, typ, fn) {
     if ( elm.nodeType == 3 || elm.nodeType == 8 )
 		return;
-    
+
     if (elm && elm.removeEventListener) {
         elm.removeEventListener(typ, fn, false);
     } else if (elm && elm.detachEvent) {
@@ -62,13 +62,14 @@ function get_pageOffsetY(w){
 
 var l_ua=/&/g,l_va=/</g,l_wa=/>/g;
 var l_xa=/\"/g;
-function escape_html_(a){if(!a)return"";return a.replace(l_ua,"&amp;").replace(l_va,"&lt;").replace(l_wa,"&gt;").replace(l_xa,"&quot;")}
+var l_ws=/ /g;
+function escape_html_(a){if(!a)return"";return a.replace(l_ua,"&amp;").replace(l_va,"&lt;").replace(l_wa,"&gt;").replace(l_xa,"&quot;").replace(l_ws,"&nbsp;")}
 
 function escape_html(a){
     if(!a)return '';
-    
-    var m = {'&': '&amp;', '>': '&gt;', '<': '&lt;'};
-    return a.replace(/[&<>]/,function(a){
+
+    var m = {'&': '&amp;', '>': '&gt;', '<': '&lt;', ' ': '&nbsp;'};
+    return a.replace(/[&<> ]/g,function(a){
             return m[a];
         });
 }
@@ -79,7 +80,7 @@ var Sporx = window.Sporx = function() {};
 
 Sporx.prototype = {
     start: function() {
-        
+
         this.size = 9;
 
         this._offset  = 0;
@@ -88,7 +89,7 @@ Sporx.prototype = {
 
         addEv(this.canvas, 'click', function(ev){ sporx.onPresentationClick(ev); });
         // addEv(this.canvas, 'dblclick', function(ev){ sporx.prevSlide(); });
-        
+
         //addEv(document.body, 'contextmenu', function(ev){return false;alert(1);});
 
         function resize_canvas(){
@@ -111,18 +112,18 @@ Sporx.prototype = {
         this.toolbar         = document.getElementById('canvasToolbar');
         this.toolbarHeight   = this.toolbar.offsetHeight;
         this.hide_toolbar();
-        
+
         var slides_text = document.getElementById('builtinCode').value;
-        
+
         this.slides = this.splitSlides(slides_text);
-        
+
         this.current = 0;
         if (String(location).match(/#(\d+)$/)) {
             this.current = RegExp.$1;
         }
-        
+
         document.getElementById("max_page").innerHTML = this.slides.length;
-        
+
         if (this.slides.length) {
             if (!document.title) {
                 document.title = this.slides[0].
@@ -130,21 +131,21 @@ Sporx.prototype = {
                     replace(/\{\{(.*\|)?\s*/g, '').
                     replace(/\s*\}\}/g, '');
             }
-            
+
             this.dataFolder = ('' + location.href).split('?')[0].replace(/[^\/]+$/, '');
             this.takahashi();
         }
     },
-    
+
     updateUrl: function() {
         location.hash = '#' + this.current;
     },
-    
+
     hide_toolbar: function() {
         this.toolbar.style.top = (0-this.toolbarHeight) + 'px';
         this.isToolbarHidden = true;
     },
-    
+
     onPresentationClick: function(aEvent) {
         aEvent = aEvent || window.event;
         if (!this.isToolbarHidden)
@@ -156,12 +157,12 @@ Sporx.prototype = {
         } else {
             this.nextSlide();
         }
-        
+
     },
 
     fix_pre: function(text) {
         return text;
-        
+
         return text.replace(
             /((^ .*\n)+)/mg, function(m, $1) {
                 return '.pre\n' + $1 + '.pre\n';
@@ -192,9 +193,9 @@ Sporx.prototype = {
         var line;
 
         var labelId = 0;
-        
+
         //for (var i = 0; i < text.length; i++) {
-        
+
         while (line = text.shift()) {
             this.content.appendChild(document.createElement('div'));
             this.content.lastChild.setAttribute('align', 'center');
@@ -203,7 +204,7 @@ Sporx.prototype = {
             //line = text[i];
             image_width  = 0;
             image_height = 0;
-        
+
             if (line.match(/^\*\s+/)) {
                 var ul = document.createElement('ul');
                 while (line.match(/^\*\s+/)) {
@@ -224,8 +225,10 @@ Sporx.prototype = {
 
             if (line.match(/^ /)) {
                 this.content.lastChild.setAttribute('align', 'left');
-                this.content.lastChild.setAttribute('class', 'pre');
+                this.content.lastChild.setAttribute('class', 'pre-big');
                 line = line.substring(1);
+                _log('"' + line + '"');
+                //line = line.replace(/  /g, '    ');
             }
 
             this.inlineMarkupMess(line, this.content);
@@ -234,31 +237,31 @@ Sporx.prototype = {
             image_total_height += image_height;
         }
 
-        
+
         // 调整 slide 适应屏幕尺寸
         this.adjustCanvasSize();
 
         this.canvas.rendering = null;
     },
-    
+
     adjustCanvasSize: function() {
-        
+
         if (!this.content) {
             return;
         }
-        
+
         this.content.style.fontSize = '12px';
 
         if (this.content.offsetHeight) {
             var canvas_w  = this.canvas.offsetWidth;
             var canvas_h  = this.canvas.offsetHeight - image_total_height;
-        
+
             this.canvas.style.width = '9999px';
             this.content.style.cssFloat = 'left';
-        
+
             var content_w = this.content.offsetWidth;
             var new_fs = Math.floor((canvas_w/content_w) * this.size);
-        
+
             this.content.style.fontSize = new_fs + "px";
 
             if (this.content.offsetWidth < image_total_width) {
@@ -266,10 +269,10 @@ Sporx.prototype = {
                 new_fs = Math.floor((canvas_w/content_w) * this.size);
                 this.content.style.fontSize = new_fs + "px";
             }
-        
+
             this.canvas.style.width = '';
             this.content.style.cssFloat = '';
-        
+
             var content_h = this.content.offsetHeight;
             if (content_h >= canvas_h) {
                 content_h = this.content.offsetHeight;
@@ -283,9 +286,9 @@ Sporx.prototype = {
             }
         }
     },
-    
+
     inlineMarkupMess: function(line, content) {
-        
+
         var uri;
         image_total_width  = 0;
         image_total_height = 0;
@@ -304,8 +307,8 @@ Sporx.prototype = {
             \{\{(([^\|]+)?\||)(.+?)\}\}     -> {{abc||def}}
         )
         (.+)?
-    
-    
+
+
         $1  -> 普通文本
         $2  -> 图像和特殊标记
         $3  -> 图像地址
@@ -316,7 +319,7 @@ Sporx.prototype = {
         $8  -> abc||def 这样标记中的 def
         $9  -> 剩余数据
         + + + + + + + + + + + + + + */
-        
+
         var m;
         while (m = line.match(/^((?:[^\{]|\{[^\{])+)?(\{\{ima?ge? +src="([^"]+)" +width="([0-9]+)" +height="([0-9]+)"[^\}]*\}\}|\{\{(([^\|]+)?\||)(.+?)\}\})(.+)?/)) {
             if (RegExp.$1) {
@@ -324,14 +327,17 @@ Sporx.prototype = {
                     document.createElement('span')
                 );
                 content.lastChild.lastChild.innerHTML = escape_html(RegExp.$1);
+
+                this.fixPre(content.lastChild);
             }
-            
+
             //_log(line, m);
-            
+
             // Images
             if (/^((?:[^\{]|\{[^\{])+)?\{\{ima?ge? +src="([^\"]+)" +width="([0-9]+)" +height="([0-9]+)"[^\}]*\}\}/.test(line)) {
                 content.lastChild.
                     appendChild(document.createElement('img'));
+
                 var image_src = RegExp.$2;
                 if (image_src.indexOf('http://') < 0 &&
                     image_src.indexOf('https://') < 0)
@@ -341,6 +347,9 @@ Sporx.prototype = {
                 content.lastChild.lastChild.height = parseInt(RegExp.$4 || '0');
                 image_width  += parseInt(RegExp.$3 || '0');
                 image_height = Math.max(image_height, parseInt(RegExp.$4 || '0'));
+
+                this.fixPre(content.lastChild);
+
             }
 
             // Styles 普通带 class 文本，不是 link
@@ -350,6 +359,7 @@ Sporx.prototype = {
                     appendChild(document.createElement('span'));
                 content.lastChild.lastChild.innerHTML = escape_html(uri);
                 content.lastChild.lastChild.className = RegExp.$3;
+                this.fixPre(content.lastChild);
             }
 
             // Links
@@ -359,21 +369,37 @@ Sporx.prototype = {
                     uri = this.dataFolder + uri;
                 content.lastChild.
                     appendChild(document.createElement('a'));
+
                 content.lastChild.lastChild.innerHTML = escape_html(RegExp.$3 || RegExp.$4);
                 content.lastChild.lastChild.href = uri;
                 content.lastChild.lastChild.title = uri;
                 content.lastChild.lastChild.target = '_blank';
                 content.lastChild.lastChild.className = 'link-text';
+                this.fixPre(content.lastChild);
             }
 
             line = m[9] || '';
         }
 
         if (line) {
+            _log("text node: " + line);
+            _log("parent class name: " + content.lastChild.className);
             content.lastChild.appendChild(document.createElement('span'));
             content.lastChild.lastChild.innerHTML = escape_html(line);
+            this.fixPre(content.lastChild);
         }
 
+    },
+
+    fixPre: function (node) {
+        if (/\bpre-big\b/.test(node.className)) {
+            _log("found pre!!! " + node.className);
+        }
+        if (node.lastChild.className) {
+            //node.lastChild.className += ' pre';
+        } else {
+            //node.lastChild.className = 'pre';
+        }
     },
 
     nextSlide: function() {
@@ -406,30 +432,30 @@ Sporx.prototype = {
 
     showSlide: function(n) {
         n = Math.min(this.slides.length - 1, Math.max(0, n));
-        
+
         if (this.current != n) {
             this.current = n;
             this.takahashi();
         }
     },
-    
+
     splitSlides: function(text) {
         var slides = text.
             replace(/\n__END__\r?\n[\s\S]*/m, '\n').
             replace(/&amp;/g, '&').
             replace(/&lt;/g, '<').
             split('----');
-        
+
         for (var i = 0; i < slides.length; i++) {
             var slide = slides[i];
-            
+
             // 去除 # 开头的 slide
             if (slide.match(/^\n*$/) || slide.match(/^\s*#/)) {
                 slides.splice(i, 1);
                 i--;
                 continue;
             }
-            
+
             // + 开头的 条目 单独分到页面里去
             var set = [];
             if (slide.match(/^([\s\S]*?\n)\+/)) {
@@ -446,14 +472,14 @@ Sporx.prototype = {
                 }
             }
         }
-        
+
         for (i = slides.length - 1; i >= 0; i--) {
             slides[i] = slides[i].replace(/\\(["\\])/g, '$1');
         }
-        
+
         return slides;
     },
-    
+
     onToolbarArea: false,
     toolbarHeight: 0,
     toolbarDelay: 300,
@@ -501,7 +527,7 @@ Sporx.prototype = {
         }
         this.toolbarAnimationInfo.current = 0;
 
-        this.toolbar.style.top = 
+        this.toolbar.style.top =
                 (0-(this.toolbarHeight-this.toolbarAnimationInfo.start)) + 'px';
 
         this.toolbarAnimationTimer = window.setTimeout(
@@ -551,21 +577,21 @@ Sporx.prototype = {
 addEv(window, 'load', function(){
     sporx = new Sporx();
     sporx.start();
-    
+
     addEv(document.body, 'mousemove', function(e){
         sporx.onMouseMoveOnCanvas(e);
     });
-    
+
     addEv(document, 'keypress', function(e){
         if (String(location.hash).match(/^#edit$/))
             return true;
-        
+
         if (e.altKey || e.ctrlKey) {
             return true
         }
-        
+
         key = (e || event).keyCode
-        
+
         //_log(key);
         switch(key) {
             case 8:
@@ -585,7 +611,7 @@ addEv(window, 'load', function(){
         }
         return false;
     });
-    
+
     rmEv(window, 'load', arguments.callee);
 });
 
