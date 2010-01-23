@@ -266,6 +266,7 @@ body{
   width:90%;
   left:5%;
   padding:5px 10px;
+  z-index:5;
 }
 #canvasToolbar .fr{
   float:right;

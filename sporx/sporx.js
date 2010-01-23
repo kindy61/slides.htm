@@ -1,11 +1,6 @@
 
-if(typeof console != 'undefined'){
-window._log=function(){console.log.apply(console, arguments);};
-window._profile=function(){(arguments.length?console.profile:console.profileEnd).apply(console, arguments);};
-}else{
-window._log=function(){};
-window._profile=function(){};
-}
+window._log=function(){window.console && console.log.apply(console, arguments);};
+window._profile=function(){window.console && (arguments.length?console.profile:console.profileEnd).apply(console, arguments);};
 
 function addEv(elm, typ, fn) {
     if ( elm.nodeType == 3 || elm.nodeType == 8 )
@@ -77,6 +72,7 @@ function escape_html(a){
 
 // Sporx
 var Sporx = window.Sporx = function() {};
+var floatProp = document.all?'styleFloat':'cssFloat';
 
 Sporx.prototype = {
     start: function() {
@@ -119,7 +115,7 @@ Sporx.prototype = {
 
         this.current = 0;
         if (String(location).match(/#(\d+)$/)) {
-            this.current = RegExp.$1;
+            this.current = parseInt(RegExp.$1, 10) - 1;
         }
 
         document.getElementById("max_page").innerHTML = this.slides.length;
@@ -138,7 +134,7 @@ Sporx.prototype = {
     },
 
     updateUrl: function() {
-        location.hash = '#' + this.current;
+        location.hash = '#' + (this.current + 1);
     },
 
     hide_toolbar: function() {
@@ -187,9 +183,9 @@ Sporx.prototype = {
             return;
         }
         text = text.
-            replace(/^[\r\n]+/g,"").
-            replace(/[\r\n]+$/g,"").
-            replace(/(\r\n|[\r\n])/g,"\n").
+            replace(/^[\r\n]+/,"").
+            replace(/[\r\n]+$/,"").
+            replace(/(\r\n|\r)/g,"\n").
             split('\n');
 
         this.content.innerHTML = '';
@@ -228,7 +224,7 @@ Sporx.prototype = {
                 continue;
             }
 
-            if (line.match(/^ /)) {
+            if (line.charAt(0) === ' ') {
                 this.content.lastChild.setAttribute('align', 'left');
                 this.content.lastChild.setAttribute('class', 'pre-big');
                 line = line.substring(1);
@@ -242,51 +238,52 @@ Sporx.prototype = {
             image_total_height += image_height;
         }
 
-
         // 调整 slide 适应屏幕尺寸
-        this.adjustCanvasSize();
+        sporx.adjustCanvasSize();
 
         this.canvas.rendering = null;
-        var me = this;
-        setInterval(function () {
-            me.adjustCanvasSize();
-        }, 200);
     },
 
     adjustCanvasSize: function() {
+        // alert(arguments.callee.caller);
         if (!this.content) {
             return;
         }
+        
+        var contentStyle = this.content.style;
+        function setFontSize(s) {
+            contentStyle.fontSize = (s < 1 ? 1 : s) + 'px';
+        }
 
-        this.content.style.fontSize = '10px';
+        setFontSize(this.size);
 
         if (this.content.offsetHeight) {
             var canvas_w  = this.canvas.offsetWidth;
             var canvas_h  = this.canvas.offsetHeight - image_total_height;
 
             this.canvas.style.width = '9999px';
-            this.content.style.cssFloat = 'left';
+            this.content.style[floatProp] = 'left';
 
             var content_w = this.content.offsetWidth;
             var new_fs = Math.floor((canvas_w/content_w) * this.size);
 
-            this.content.style.fontSize = new_fs + "px";
+            setFontSize(new_fs);
 
             if (this.content.offsetWidth < image_total_width) {
                 content_w = image_total_width;
                 new_fs = Math.floor((canvas_w/content_w) * this.size);
-                this.content.style.fontSize = new_fs + "px";
+                setFontSize(new_fs);
             }
 
             this.canvas.style.width = '';
-            this.content.style.cssFloat = '';
+            this.content.style[floatProp] = '';
 
             var content_h = this.content.offsetHeight;
             if (content_h >= canvas_h) {
-                content_h = this.content.offsetHeight;
                 new_fs = Math.ceil((canvas_h/content_h) * new_fs);
-                this.content.style.fontSize = new_fs + "px";
+                setFontSize(new_fs);
             }
+
             content_h = this.content.offsetHeight;
             //content_h = 0;
             //_log("content_h: " + content_h);
@@ -299,7 +296,6 @@ Sporx.prototype = {
                     + diff + ", content top: "
                     + this.content.style.top);
                     */
-
             if (diff > 20) {
                 //_log("adjusting...");
                 this.content.style.top = diff/2.8 + 'px';
@@ -602,6 +598,9 @@ Sporx.prototype = {
 //------------------------------------------------------------------------------
 // Initialization code
 //------------------------------------------------------------------------------
+
+var sporx;
+
 addEv(window, 'load', function(){
     sporx = new Sporx();
     sporx.start();
@@ -620,7 +619,7 @@ addEv(window, 'load', function(){
 
         key = (e || event).keyCode
 
-        _log(key);
+        // _log(key);
         switch(key) {
             case 8:
             case 33:
