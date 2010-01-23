@@ -181,7 +181,12 @@ Sporx.prototype = {
 
         this.canvas.rendering = true;
 
-        var text = this.slides[num].
+        var text = this.slides[num];
+        if (!text) {
+            alert("current page: " + num);
+            return;
+        }
+        text = text.
             replace(/^[\r\n]+/g,"").
             replace(/[\r\n]+$/g,"").
             replace(/(\r\n|[\r\n])/g,"\n").
@@ -226,7 +231,7 @@ Sporx.prototype = {
             if (line.match(/^ /)) {
                 this.content.lastChild.setAttribute('align', 'left');
                 this.content.lastChild.setAttribute('class', 'pre-big');
-                //line = line.substring(1);
+                line = line.substring(1);
                 //_log('"' + line + '"');
                 //line = line.replace(/  /g, '    ');
             }
@@ -364,6 +369,7 @@ Sporx.prototype = {
                 content.lastChild.lastChild.src = image_src;
                 content.lastChild.lastChild.width = parseInt(RegExp.$3 || '0');
                 content.lastChild.lastChild.height = parseInt(RegExp.$4 || '0');
+                content.lastChild.lastChild.alt = "";
                 image_width  += parseInt(RegExp.$3 || '0');
                 image_height = Math.max(image_height, parseInt(RegExp.$4 || '0'));
 
@@ -466,7 +472,7 @@ Sporx.prototype = {
             replace(/\n__END__\r?\n[\s\S]*/m, '\n').
             replace(/&amp;/g, '&').
             replace(/&lt;/g, '<').
-            split('----\n');
+            split(/----[\r\n]/);
 
         for (var i = 0; i < slides.length; i++) {
             var slide = slides[i];
@@ -618,17 +624,23 @@ addEv(window, 'load', function(){
         switch(key) {
             case 8:
             case 33:
-                e.preventDefault();
             case 37:
+            case 38:
             case 112:
+                if (e.preventDefault) {
+                    e.preventDefault();
+                }
                 sporx.prevSlide();
                 break;
             case 13:
             case 32:
             case 34:
-                e.preventDefault();
             case 39:
+            case 40:
             case 110:
+                if (e.preventDefault) {
+                    e.preventDefault();
+                }
                 sporx.nextSlide();
                 break;
             default:
