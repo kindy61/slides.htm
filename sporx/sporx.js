@@ -3,10 +3,13 @@ window._log=function(){window.console && console.log.apply(console, arguments);}
 window._profile=function(){window.console && (arguments.length?console.profile:console.profileEnd).apply(console, arguments);};
 
 function addEv(elm, typ, fn) {
+    /*
     if ( elm.nodeType == 3 || elm.nodeType == 8 )
-		return;
+        return;
+        */
 
     if (elm && elm.addEventListener) {
+        _log("add event!" + typ);
         elm.addEventListener(typ, fn, false);
     } else if (elm && elm.attachEvent) {
         elm.attachEvent('on' + typ, fn);
@@ -153,7 +156,8 @@ Sporx.prototype = {
         if (!this.isToolbarHidden)
             this.showHideToolbar();
 
-        var uri = aEvent.target.getAttribute('href');
+        var target = aEvent.target || aEvent.srcElement;
+        var uri = target.getAttribute('href');
         if (uri) {
             window.open(uri);
         } else {
@@ -185,7 +189,7 @@ Sporx.prototype = {
 
         var text = this.slides[num];
         if (!text) {
-            alert("current page: " + num);
+            //alert("current page: " + num);
             return;
         }
         text = text.
@@ -261,6 +265,7 @@ Sporx.prototype = {
             contentStyle.fontSize = (s < 1 ? 1 : s) + 'px';
         }
 
+        //alert("font size: " + this.size);
         setFontSize(this.size);
 
         if (this.content.offsetHeight) {
@@ -303,9 +308,10 @@ Sporx.prototype = {
                     + this.content.style.top);
                     */
             if (diff > 20) {
-                //_log("adjusting...");
+                _log("adjusting... diff");
                 this.content.style.top = diff/2.8 + 'px';
-            } else {
+            } else if (this.content.style.top != 0) {
+                _log("adjusting... 0");
                 this.content.style.top = 0;
             }
 
@@ -611,21 +617,37 @@ addEv(window, 'load', function(){
     sporx = new Sporx();
     sporx.start();
 
+    setInterval(function () {
+        var sel;
+        if (document.getSelection) {
+            sel = document.getSelection();
+        } else {
+            sel = document.selection;
+        }
+
+        if (!sel) {
+            sporx.adjustCanvasSize();
+            _log("selection: \"" + sel + "\"");
+        }
+    }, 200);
+
     addEv(document.body, 'mousemove', function(e){
         sporx.onMouseMoveOnCanvas(e);
     });
 
-    addEv(document, 'keypress', function(e){
+    addEv(document, 'keydown', function(e){
+        //alert("Hi");
         if (String(location.hash).match(/^#edit$/))
             return true;
 
         if (e.altKey || e.ctrlKey) {
-            return true
+            return true;
         }
 
-        key = (e || event).keyCode
+        key = (e || window.event).keyCode;
 
-        // _log(key);
+        //alert("key: " + key);
+        _log("key: " + key);
         switch(key) {
             case 8:
             case 33:

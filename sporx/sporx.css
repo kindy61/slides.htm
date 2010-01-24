@@ -200,7 +200,7 @@
        monospace;
   padding-bottom: 8px;
   font-weight: bold;
-  margin-left: 10%;
+  /* margin-left: 10%; */
 }
 
 .pre {
