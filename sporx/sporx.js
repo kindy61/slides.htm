@@ -83,7 +83,13 @@ Sporx.prototype = {
         // 存储显示区域
         this.canvas   = document.getElementById('canvas');
 
-        //addEv(this.canvas, 'click', function(ev){ sporx.onPresentationClick(ev); });
+        addEv(this.canvas, 'click', function(e){
+            if (e.altKey || e.ctrlKey) {
+                return false;
+            }
+
+            sporx.onPresentationClick(e);
+        });
         // addEv(this.canvas, 'dblclick', function(ev){ sporx.prevSlide(); });
 
         //addEv(document.body, 'contextmenu', function(ev){return false;alert(1);});
