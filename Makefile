@@ -1,4 +1,4 @@
-all: vdomwebkit.html
+all: sample-slides.html
 
 %.slides: %.sld
 	perl bin/pre.pl $< > $@

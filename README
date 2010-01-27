@@ -1,3 +1,12 @@
+This is a tool to convert POD-like text into a shiney HTML
+based slides. We borrowed most of the code and style from
+the excellent XUL slidemaker tool named Sporx.
+
+To produce your own slides, just edit sample-slides.sld
+file and run "make" again. If you prefer another file name,
+just rename the sample-slides.sld file and also edit the
+Makefile's first line to my-new-name.html where "my-new-name"
+is your slides source file's new basename.
 
 h2. BUG
 
