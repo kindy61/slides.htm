@@ -1,0 +1,4 @@
+main_template: sporx.html
+license_template: license.html
+css_location: css/sporx.css
+javascript_runtime: lib/sporx.js

@@ -1,0 +1,45 @@
+[%- DEFAULT css_location='css/sporx.css' -%]
+[%- DEFAULT javascript_runtime='lib/sporx.js' -%]
+[%- DEFAULT license_template='template/license.html' -%]
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <title></title>
+    <link href="[% css_location %]" media="screen" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div id="canvasToolbar">
+
+      <!--div class="fr">
+        <button onclick="Sporx.addPage()">New Page</button>
+        <button onclick="Sporx.toggleEditMode()">Edit</button>
+        <button onclick="Sporx.reload()">Reload</button>
+      </div-->
+
+      <div>
+        <button onclick="sporx.firstSlide()">|&lt;&lt;</button>
+        <button onclick="sporx.prevSlide()">&lt;</button>
+        <button onclick="sporx.nextSlide()">&gt;</button>
+        <button onclick="sporx.lastSlide()">&gt;&gt;|</button>
+        <input type="text" id="current_page" size="4" onkeypress="if (this.value) sporx.showSlide(parseInt(this.value)-1);" />
+        /
+        <span id="max_page"></span>
+      </div>
+    </div>
+    <div id="canvas"><div id="content"></div></div>
+    <iframe style="display:none;" id="dataLoader"></iframe>
+    <div id="edit">
+      <textarea id="textField"></textarea>
+    </div>
+    <textarea id="builtinCode" style="width:1px;position:absolute;left:-5px;overflow:hidden;">
+[%- slides_content -%]
+</textarea>
+
+<script src="[% javascript_runtime %]" type="application/x-javascript"></script>
+
+  </body>
+</html>
+[% INCLUDE $license_template %]
+
