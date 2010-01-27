@@ -8,6 +8,10 @@ just rename the sample-slides.sld file and also edit the
 Makefile's first line to my-new-name.html where "my-new-name"
 is your slides source file's new basename.
 
+Final sample-slides.html can be browsed here
+
+    http://agentzh.org/misc/slides/taobao-fe/sample-slides.html
+
 h2. BUG
 
 * mac 下快捷键不好用
