@@ -41,7 +41,7 @@
   sans-serif !important;
 }
 #canvas * {
-  cursor: pointer !important;
+  cursor: text !important;
 }
 #canvas img {
   width: auto;
