@@ -1,5 +1,6 @@
 [%- DEFAULT css_location='css/sporx.css' -%]
 [%- DEFAULT javascript_runtime='lib/sporx.js' -%]
+[%- DEFAULT jquery_path='lib/jquery.js' -%]
 [%- DEFAULT license_template='template/license.html' -%]
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -8,6 +9,9 @@
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
     <title></title>
     <link href="[% css_location %]" media="screen" rel="stylesheet" type="text/css" />
+    <script src="[% jquery_path %]"></script>
+    <script src="[% javascript_runtime %]"></script>
+
   </head>
   <body>
     <div id="canvasToolbar">
@@ -36,8 +40,6 @@
     <textarea id="builtinCode" style="width:1px;position:absolute;left:-5px;overflow:hidden;">
 [%- slides_content -%]
 </textarea>
-
-<script src="[% javascript_runtime %]" type="application/x-javascript"></script>
 
   </body>
 </html>

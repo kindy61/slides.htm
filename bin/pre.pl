@@ -20,7 +20,7 @@ while (<>) {
     s/\{\{img\s+src="([^"]+)"\}\}/"{{img src=\"$1\" " . gen_wh($1) . "}}"/ge;
     my $new;
     if (/\{\{img\s+/) {
-        $new = qq<{{img src="#" width="0" height="0"}}\n>;
+        #$new = qq<{{img src="#" width="0" height="0"}}\n>;
         $firstTime = 0;
     }
     while (1) {
