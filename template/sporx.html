@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
     <title></title>
-    <link href="[% css_location %]" media="screen" rel="stylesheet" type="text/css" />
+    <link href="[% css_location %]" rel="stylesheet" type="text/css" />
     <script src="[% jquery_path %]"></script>
     <script src="[% javascript_runtime %]"></script>
 
@@ -24,6 +24,7 @@
       </div-->
 
       <div>
+        <button onclick="sporx.printPdf()">pdf</button>
         <button onclick="sporx.firstSlide()">|&lt;&lt;</button>
         <button onclick="sporx.prevSlide()">&lt;</button>
         <button onclick="sporx.nextSlide()">&gt;</button>

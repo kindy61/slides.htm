@@ -40,6 +40,10 @@
   
   sans-serif !important;
 }
+body.in-print #canvas,
+body.in-print #canvasToolbar {
+  display: none;
+}
 #canvas * {
   cursor: text !important;
 }
