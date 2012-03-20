@@ -1,3 +1,5 @@
+.PHONY: all
+
 all: sample-slides.html
 
 %.slides: %.sld
