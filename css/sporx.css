@@ -1,5 +1,4 @@
 @charset "UTF-8";
-
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1
  *
@@ -22,23 +21,18 @@
  * Contributor(s): SHIMODA Hiroshi <piro@p.club.ne.jp>
  *
  * ***** END LICENSE BLOCK ***** */
-
+body {
+  background: white;
+}
+body.dark-style {
+  background: #191919;
+}
 #canvas {
-  color: #000 !important;
-  background: white !important;
-  font-family:
-  "Candara"
-  "Georgia"
-  "DejaVu Serif Condensed"
-  "Arial"
-  "微软雅黑"
-  "Bitstream Vera Sans"
-  "Verdana"
-  "Apple LiGothic"
-  "Arial Black"
-  "Bitstream Vera Sans"
-  
-  sans-serif !important;
+  color: #191919;
+  font-family: "Candara", "Georgia", "DejaVu Serif Condensed", "Arial", "微软雅黑", "Bitstream Vera Sans", "Verdana", "Apple LiGothic", "Arial Black", "Bitstream Vera Sans", sans-serif;
+}
+.dark-style #canvas {
+  color: #e6e6e6;
 }
 body.in-print #canvas,
 body.in-print #canvasToolbar {
@@ -52,18 +46,30 @@ body.in-print #canvasToolbar {
   height: auto;
 }
 .link-text {
-  color: #000066 !important;
+  color: #000066;
   text-decoration: none !important;
 }
+.dark-style .link-text {
+  color: #9999ff;
+}
 .link-text:hover {
-  color: #3333FF !important;
-/*    border-bottom: dotted 1px; */
+  color: #3333ff;
+  /*    border-bottom: dotted 1px; */
+}
+.dark-style .link-text:hover {
+  color: #0000cc;
 }
 .link-text:active {
-  color: #9999FF !important;
+  color: #9999ff;
+}
+.dark-style .link-text:active {
+  color: #000066;
 }
 .kw {
-  color: #3333FF
+  color: #5658d2;
+}
+.dark-style .kw {
+  color: #9ea0eb;
 }
 .s {
   text-decoration: line-through;
@@ -73,7 +79,7 @@ body.in-print #canvasToolbar {
   font-style: italic;
 }
 .ui {
-/*  text-decoration: underline; */
+  /*  text-decoration: underline; */
   font-style: italic;
 }
 .u {
@@ -85,15 +91,21 @@ body.in-print #canvasToolbar {
   font-size: 40%;
   color: #339933;
 }
+.dark-style .date {
+  color: #66cc66;
+}
 .bdate {
   font-style: italic;
   text-decoration: underline;
   font-size: 90%;
   color: #339933;
 }
+.dark-style .bdate {
+  color: #66cc66;
+}
 .i {
   font-style: italic;
-  font-family: "Cambria" "Times New Roman" "Bitstream Vera Serif" serif;
+  font-family: "Cambria", "Times New Roman", "Bitstream Vera Serif", serif;
 }
 .t {
   font-style: italic;
@@ -101,182 +113,226 @@ body.in-print #canvasToolbar {
 .tag {
   color: #998833;
 }
+.dark-style .tag {
+  color: #ccbb66;
+}
 .v {
   color: #998833;
+}
+.dark-style .v {
+  color: #efde87;
 }
 .att {
   color: #333399;
 }
+.dark-style .att {
+  color: #6666cc;
+}
 .key {
   color: #009999;
 }
+.dark-style .key {
+  color: #66ffff;
+}
 .h {
-  color: #000;
+  color: #191919;
   margin: 0px;
 }
+.dark-style .h {
+  color: #e6e6e6;
+}
 .c {
-  color: #C39;
+  color: #cc3399;
   margin: 0px;
+}
+.dark-style .c {
+  color: #cc3399;
 }
 .cm {
   color: #117711;
 }
+.dark-style .cm {
+  color: #88ee88;
+}
 .m {
-  color: #963;
+  color: #996633;
   margin: 0px;
   font-family: "Comic Sans MS";
 }
+.dark-style .m {
+  color: #cc9966;
+}
 .cz {
-  color: #C39;
+  color: #cc3399;
   margin: 0px;
   font-family: "Candara";
   margin-right: -10px;
 }
+.dark-style .cz {
+  color: #cc3399;
+}
 .z {
   margin: 0px;
   margin-left: -10px;
-  font-family: "Candara"
+  font-family: "Candara";
 }
 .x {
-  color: #C00;
+  color: #cc0000;
   margin: 0px;
 }
+.dark-style .x {
+  color: #f16969;
+}
 .xs {
-  color: #633;
+  color: #663333;
   margin: 0px;
   text-decoration: line-through;
 }
+.dark-style .xs {
+  color: #cc9999;
+}
 .ci {
-  color: #C39;
+  color: #cc3399;
   margin: 0px;
   font-style: italic;
 }
+.dark-style .ci {
+  color: #cc3399;
+}
 .author {
-        color: #C39;
-        margin: 0px;
-        font-style: italic;
-        font-family: "Consolas"
-                     "Constantia"
-                     "Times New Roman"
-                     "微软雅黑"
-                     "Bitstream Vera Serif"
-                     serif;
-        font-size: 70%;
+  color: #cc3399;
+  margin: 0px;
+  font-style: italic;
+  font-family: "Consolas", "Constantia", "Times New Roman", "微软雅黑", "Bitstream Vera Serif", serif;
+  font-size: 70%;
+}
+.dark-style .author {
+  color: #f386cf;
 }
 .cu {
-  color: #C39;
+  color: #cc3399;
   margin: 0px;
   text-decoration: underline;
 }
+.dark-style .cu {
+  color: #cc3399;
+}
 .ct {
-  color: #C39;
+  color: #cc3399;
   margin: 0px;
   font-style: italic;
 }
+.dark-style .ct {
+  color: #cc3399;
+}
 .hs {
-  color: #f33;
+  color: #ff3333;
   margin: 0px;
   text-decoration: line-through;
 }
+.dark-style .hs {
+  color: #cc0000;
+}
 .ht {
-  color: #aaa;
+  color: #aaaaaa;
   font-style: italic;
 }
+.dark-style .ht {
+  color: #555555;
+}
 .pre {
-  font-family: "Consolas"
-       "Courier New"
-       "Anonymous"
-       "Andale Mono"
-       "Bitstream Vera Sans Mono"
-       "微软雅黑"
-       monospace;
+  font-family: "Consolas", "Courier New", "Anonymous", "Andale Mono", "Bitstream Vera Sans Mono", "微软雅黑", monospace;
   padding-bottom: 8px;
   font-weight: bold;
 }
-
 .pre-big {
-  font-family: "Consolas"
-       "Courier New"
-       "Anonymous"
-       "Andale Mono"
-       "Bitstream Vera Sans Mono"
-       "微软雅黑"
-       monospace;
+  font-family: "Consolas", "Courier New", "Anonymous", "Andale Mono", "Bitstream Vera Sans Mono", "微软雅黑", monospace;
   padding-bottom: 8px;
   font-weight: bold;
   /* margin-left: 10%; */
 }
-
 .pre {
-  font-family: "Consolas"
-       "Courier New"
-       "Anonymous"
-       "Andale Mono"
-       "Bitstream Vera Sans Mono"
-       "微软雅黑"
-       monospace;
+  font-family: "Consolas", "Courier New", "Anonymous", "Andale Mono", "Bitstream Vera Sans Mono", "微软雅黑", monospace;
   padding-bottom: 8px;
   font-weight: bold;
+}
+#canvas[rendering="true"] {
+  visibility: hidden;
 }
 #canvas[rendering="true"] img {
   display: none;
 }
 #canvas[rendering="true"] *,
 #canvas[rendering="true"] .text-link {
-  color: white !important;
+  color: white;
 }
-
-
-html, body, div {
+.dark-style #canvas[rendering="true"] *,
+.dark-style #canvas[rendering="true"] .text-link {
+  color: #000000;
+}
+html,
+body,
+div {
   margin: 0;
   padding: 2px;
 }
-
-body{
-  margin:0 10px;
+body {
+  margin: 0 10px;
 }
-
-
 #canvas[eva="true"] {
-  background: white !important;
-  color: black !important;
-  font-family:
-  "Georgia"
-  "DejaVu Serif Condensed"
-  "Apple LiGothic"
-  "Arial Black"
-  serif !important;
+  color: #191919;
+  font-family: "Georgia", "DejaVu Serif Condensed", "Apple LiGothic", "Arial Black", serif !important;
+}
+.dark-style #canvas[eva="true"] {
+  color: #e6e6e6;
 }
 #canvas[eva="true"] .link-text {
-  color: red !important;
+  color: red;
   text-decoration: none !important;
 }
+.dark-style #canvas[eva="true"] .link-text {
+  color: #ff0000;
+}
 #canvas[eva="true"] .link-text:hover {
-  color: pink !important;
+  color: pink;
+}
+.dark-style #canvas[eva="true"] .link-text:hover {
+  color: #3f000b;
 }
 #canvas[eva="true"] .link-text:active {
-  color: orange !important;
+  color: orange;
+}
+.dark-style #canvas[eva="true"] .link-text:active {
+  color: #ffa500;
 }
 #canvas[rendering="true"] *,
 #canvas[rendering="true"] .text-link {
-  color: black !important;
+  color: #191919;
 }
-
-
+.dark-style #canvas[rendering="true"] *,
+.dark-style #canvas[rendering="true"] .text-link {
+  color: #e6e6e6;
+}
 #canvasToolbar {
   position: absolute;
-  border-bottom:3px solid #ccc;
-  background:#eee;
-  width:90%;
-  left:5%;
-  padding:5px 10px;
-  z-index:5;
+  border-bottom: 3px solid #ccc;
+  background: #eee;
+  width: 90%;
+  left: 5%;
+  padding: 5px 10px;
+  z-index: 5;
 }
-#canvasToolbar .fr{
-  float:right;
+#canvasToolbar .fr {
+  float: right;
 }
-
-#edit {display:none;}
-
-#content{position:relative;zoom:1;}
-
+#edit {
+  display: none;
+}
+#content {
+  position: relative;
+  zoom: 1;
+}
+button.to-dark {
+  background: black;
+  color: white;
+}
