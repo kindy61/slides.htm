@@ -146,7 +146,7 @@ body.in-print #canvasToolbar {
   margin: 0px;
 }
 .dark-style .c {
-  color: #cc3399;
+  color: #dd38a5;
 }
 .cm {
   color: #117711;
@@ -169,7 +169,7 @@ body.in-print #canvasToolbar {
   margin-right: -10px;
 }
 .dark-style .cz {
-  color: #cc3399;
+  color: #dd38a5;
 }
 .z {
   margin: 0px;
@@ -197,7 +197,7 @@ body.in-print #canvasToolbar {
   font-style: italic;
 }
 .dark-style .ci {
-  color: #cc3399;
+  color: #dd38a5;
 }
 .author {
   color: #cc3399;
@@ -207,7 +207,7 @@ body.in-print #canvasToolbar {
   font-size: 70%;
 }
 .dark-style .author {
-  color: #f386cf;
+  color: #dd38a5;
 }
 .cu {
   color: #cc3399;
@@ -215,7 +215,7 @@ body.in-print #canvasToolbar {
   text-decoration: underline;
 }
 .dark-style .cu {
-  color: #cc3399;
+  color: #dd38a5;
 }
 .ct {
   color: #cc3399;
@@ -223,7 +223,7 @@ body.in-print #canvasToolbar {
   font-style: italic;
 }
 .dark-style .ct {
-  color: #cc3399;
+  color: #dd38a5;
 }
 .hs {
   color: #ff3333;
@@ -297,7 +297,7 @@ body {
   color: pink;
 }
 .dark-style #canvas[eva="true"] .link-text:hover {
-  color: #3f000b;
+  color: pink;
 }
 #canvas[eva="true"] .link-text:active {
   color: orange;
