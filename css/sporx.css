@@ -259,17 +259,6 @@ body.in-print #canvasToolbar {
 #canvas[rendering="true"] {
   visibility: hidden;
 }
-#canvas[rendering="true"] img {
-  display: none;
-}
-#canvas[rendering="true"] *,
-#canvas[rendering="true"] .text-link {
-  color: white;
-}
-.dark-style #canvas[rendering="true"] *,
-.dark-style #canvas[rendering="true"] .text-link {
-  color: #000000;
-}
 html,
 body,
 div {
@@ -304,14 +293,6 @@ body {
 }
 .dark-style #canvas[eva="true"] .link-text:active {
   color: #ffa500;
-}
-#canvas[rendering="true"] *,
-#canvas[rendering="true"] .text-link {
-  color: #191919;
-}
-.dark-style #canvas[rendering="true"] *,
-.dark-style #canvas[rendering="true"] .text-link {
-  color: #e6e6e6;
 }
 #canvasToolbar {
   position: absolute;
